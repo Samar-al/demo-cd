@@ -1,61 +1,66 @@
 name: CI-CD-PIPELINE
- 
+
 on:
   push:
     branches:
       - main
-  pull-request:
+  pull_request:  # 🔁 was wrongly written as 'pull-request'
     branches:
       - main
- 
+
 jobs:
- 
   build:
-    runs-on: ubuntu-lastest
- 
+    runs-on: ubuntu-latest  # 🔁 typo: 'ubuntu-lastest'
+
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '22'
-  
-      - name: install dependecies
+          node-version: '22'  # 🔁 this was mistakenly inside checkout before
+
+      - name: Install dependencies
         run: npm install
-  
-      - name: build project
+
+      - name: Build project
         run: npm run build
- 
- 
+
   test:
- 
     runs-on: ubuntu-latest
     needs: build
- 
+
     steps:
-      - name: checkout repository
-      uses: actions/checkout@v4
-      with:
-        node-version: '22'
- 
-      - name: install dependecies
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
         run: npm install
-  
-      - name: run test
-        run: npm run test
- 
+
+      - name: Run tests
+        run: npm test
+
   deploy:
- 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs: test
 
     steps:
-      - name: checkout repository
-      uses: actions/checkout@v4
-      with:
-        node-version: '22'
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: deploy web app
-        run: peaceiris/actions-gh-pages@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.DEMO_CD }}
-          publish_dir: ./
+          publish_dir: ./  # Adjust if you're publishing from 'dist/' or 'build/'
